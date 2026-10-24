@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Espace parc - La Clé du Parc</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Redirection vers la connexion parc La Clé du Parc.">
+  <script src="./config.js"></script>
+  <script>
+    (() => {
+      "use strict";
+      const config = window.SITE_CONFIG || {};
+      const chemin = "/ESPACE-PARC/connexion-parc.html";
+      const destination = typeof config.parcUrl === "function"
+        ? config.parcUrl(chemin)
+        : String(config.parcBaseUrl || config.PARC_BASE || config.siteBase || window.location.origin).replace(/\/+$/, "") + chemin;
+      window.location.replace(destination);
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirection vers la connexion parc…</p>
+  <p><a href="./ESPACE-PARC/connexion-parc.html">Accéder à la connexion</a></p>
+</body>
+</html>

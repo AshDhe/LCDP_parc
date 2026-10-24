@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+
+  <title>Connexion parc - La Clé du Parc</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Connexion à votre compte parc La Clé du Parc.">
+
+  <script src="../config.js"></script>
+
+  <script>
+    window.SITE_BASE =
+      window.SITE_CONFIG?.publicBaseUrl ||
+      window.SITE_CONFIG?.siteBase ||
+      "";
+  </script>
+
+  <script>
+    (() => {
+      const config = window.SITE_CONFIG || {};
+      const base = String(config.publicBaseUrl || config.PUBLIC_BASE || "https://lacleduparc.fr").replace(/\/+$/, "");
+      const styles = ["/OBJET/CSSBASE/cssbase.css", "/OBJET/BOX/02-box-bandeau-nav.css", "/OBJET/BOX/02-box-menu-burger.css", "/OBJET/BOX/02-box-dialogue-bouton.css", "/OBJET/BOX/02-box-footer.css", "/OBJET/BOX/02-box-alerte.css", "/OBJET/BOX/03-box-formulaire.css", "/OBJET/BOX/03-box-champ-formulaire.css"];
+      for (const chemin of styles) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = typeof config.publicUrl === "function" ? config.publicUrl(chemin) : base + chemin;
+        link.dataset.siteHref = chemin;
+        document.head.appendChild(link);
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <div class="lcdp-site-page">
+
+    <div id="lcdp-bandeau-slot"></div>
+
+    <main class="lcdp-site-main">
+      <section
+        class="lcdp-page-section"
+        aria-label="Connexion au compte parc"
+      >
+        <div class="lcdp-page-container">
+
+          <section
+            class="lcdp-component lcdp-box-formulaire-page"
+            data-lcdp-box-formulaire-page
+          >
+            <div class="lcdp-box-formulaire-page__inner">
+
+              <form
+                id="formulaire-connexion-parc"
+                class="lcdp-box-formulaire"
+                method="post"
+                novalidate
+              >
+                <header class="lcdp-box-formulaire__header">
+                  <h1 class="lcdp-box-formulaire__title">
+                    Connexion parc
+                  </h1>
+
+                  <p class="lcdp-mention-connexion">
+                    [Espace parc de l'application]
+                  </p>
+
+                  <p class="lcdp-box-formulaire__subtitle">
+                    Accédez à votre espace parc
+                  </p>
+                </header>
+
+                <div class="lcdp-box-formulaire__fields">
+
+                  <div class="lcdp-box-champ-formulaire">
+                    <div class="lcdp-box-champ-formulaire__label-zone">
+                      <label
+                        class="lcdp-box-champ-formulaire__label"
+                        for="emailparc"
+                      >
+                        Identifiant du compte
+                      </label>
+                    </div>
+
+                    <div class="lcdp-box-champ-formulaire__control">
+                      <input
+                        type="email"
+                        id="emailparc"
+                        name="emailparc"
+                        placeholder="Email"
+                        autocomplete="username"
+                        autocapitalize="none"
+                        spellcheck="false"
+                        required
+                      >
+                    </div>
+                  </div>
+
+                  <div class="lcdp-box-champ-formulaire">
+                    <div class="lcdp-box-champ-formulaire__label-zone">
+                      <label
+                        class="lcdp-box-champ-formulaire__label"
+                        for="mdpparc"
+                      >
+                        Mot de passe
+                      </label>
+                    </div>
+
+                    <div class="lcdp-box-champ-formulaire__control">
+                      <input
+                        type="password"
+                        id="mdpparc"
+                        name="mdpparc"
+                        placeholder="Mot de passe"
+                        autocomplete="current-password"
+                        required
+                      >
+
+                      <label
+                        class="lcdp-box-champ-formulaire__checkbox-line"
+                        for="afficher-mdp-parc"
+                      >
+                        <input
+                          type="checkbox"
+                          id="afficher-mdp-parc"
+                        >
+                        <span>Afficher le mot de passe</span>
+                      </label>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="lcdp-box-formulaire__actions">
+                  <button
+                    type="submit"
+                    id="bouton-valider-formulaire"
+                    class="lcdp-button lcdp-button-primary"
+                  >
+                    Connexion
+                  </button>
+                </div>
+
+                <p class="lcdp-box-formulaire__note">
+                  <a
+                    id="lien-mot-de-passe-oublie"
+                    href="./mdp-perdu-parc.html"
+                  >
+                    Mot de passe perdu ?
+                  </a>
+                </p>
+              </form>
+
+            </div>
+          </section>
+
+        </div>
+      </section>
+    </main>
+
+    <div id="lcdp-footer-slot"></div>
+    <div id="lcdp-lightbox-slot"></div>
+
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const siteBase = (
+        window.SITE_BASE ||
+        window.SITE_CONFIG?.publicBaseUrl ||
+        window.SITE_CONFIG?.siteBase ||
+        ""
+      ).replace(/\/$/, "");
+
+      function construireUrlSite(chemin) {
+        if (!chemin) return chemin;
+
+        if (
+          chemin.startsWith("#") ||
+          chemin.startsWith("mailto:") ||
+          chemin.startsWith("tel:") ||
+          chemin.startsWith("http://") ||
+          chemin.startsWith("https://") ||
+          chemin.startsWith("data:")
+        ) {
+          return chemin;
+        }
+
+        if (siteBase) {
+          return chemin.startsWith("/")
+            ? siteBase + chemin
+            : siteBase + "/" + chemin.replace(/^\.\//, "");
+        }
+
+        return chemin.startsWith("/") ? ".." + chemin : chemin;
+      }
+
+      window.LCDP_construireUrlSite = construireUrlSite;
+
+      function appliquerRoutesSite(racine = document) {
+        racine.querySelectorAll("[data-site-href]").forEach((element) => {
+          element.setAttribute("href", construireUrlSite(element.dataset.siteHref));
+        });
+
+        racine.querySelectorAll("[data-site-src]").forEach((element) => {
+          element.setAttribute("src", construireUrlSite(element.dataset.siteSrc));
+        });
+      }
+
+      async function chargerFragment(chemin) {
+        const reponse = await fetch(construireUrlSite(chemin), {
+          method: "GET",
+          credentials: "same-origin",
+          cache: "no-cache"
+        });
+
+        if (!reponse.ok) {
+          throw new Error("Fragment introuvable : " + chemin);
+        }
+
+        const html = await reponse.text();
+        const template = document.createElement("template");
+        template.innerHTML = html.trim();
+
+        return template.content.cloneNode(true);
+      }
+
+      function chargerScriptUneFois(chemin) {
+        const src = construireUrlSite(chemin);
+
+        if (document.querySelector(`script[data-lcdp-script="${chemin}"]`)) {
+          return Promise.resolve();
+        }
+
+        return new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = src;
+          script.defer = true;
+          script.dataset.lcdpScript = chemin;
+          script.onload = resolve;
+          script.onerror = () => reject(new Error("Script introuvable : " + chemin));
+          document.body.appendChild(script);
+        });
+      }
+
+      async function initialiserBandeauPublic() {
+        const slot = document.getElementById("lcdp-bandeau-slot");
+
+        if (!slot) {
+          return;
+        }
+
+        slot.innerHTML = "";
+
+        const bandeau = await chargerFragment("/ESPACE-PUBLIC/box-bandeau-nav-public.html");
+        slot.appendChild(bandeau);
+
+        appliquerRoutesSite(slot);
+
+        await chargerScriptUneFois("/ESPACE-PUBLIC/box-menu-burger-public.js");
+
+        if (typeof window.LCDP_initialiserMenuBurgerPublic === "function") {
+          await window.LCDP_initialiserMenuBurgerPublic();
+        }
+      }
+
+      async function initialiserFooterPublic() {
+        const slot = document.getElementById("lcdp-footer-slot");
+
+        if (!slot) {
+          return;
+        }
+
+        slot.innerHTML = "";
+
+        const footer = await chargerFragment("/OBJET/BOX/02-box-footer.html");
+        slot.appendChild(footer);
+
+        appliquerRoutesSite(slot);
+      }
+
+      const formulaire = document.getElementById("formulaire-connexion-parc");
+      formulaire?.addEventListener("submit", event => {
+        if (formulaire.dataset.scriptConnexionAbsent === "true") event.preventDefault();
+      });
+      window.LCDP_signalerScriptConnexionAbsent = () => {
+        if (formulaire) formulaire.dataset.scriptConnexionAbsent = "true";
+        const bouton = document.getElementById("bouton-valider-formulaire");
+        if (bouton) bouton.disabled = true;
+        const message = document.createElement("p");
+        message.className = "lcdp-box-formulaire__note";
+        message.setAttribute("role", "status");
+        message.textContent = "Connexion momentanément indisponible.";
+        formulaire?.appendChild(message);
+      };
+      appliquerRoutesSite(document);
+
+      initialiserBandeauPublic()
+        .then(initialiserFooterPublic)
+        .catch((erreur) => {
+          console.error(erreur);
+        });
+    })();
+  </script>
+  <script src="./connexion-parc.js" onerror="window.LCDP_signalerScriptConnexionAbsent()"></script>
+</body>
+</html>
