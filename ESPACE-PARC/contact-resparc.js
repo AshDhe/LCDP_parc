@@ -4,7 +4,6 @@
   "id": "formulaire-contact-resparc",
   "ariaLabel": "Formulaire de contact",
   "titre": "Formulaire de contact",
-  "sousTitre": "La clé du parc",
   "validationNative": true,
   "champs": [
     {
@@ -65,7 +64,7 @@
       "validationNative": true,
       "maxlength": 3,
       "inputmode": "text",
-      "placeholder": "Exemple 41, 2A ou 971"
+      "placeholder": "Exemple 08"
     }
   ],
   "bouton": {
