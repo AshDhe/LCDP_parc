@@ -2,10 +2,9 @@
  "use strict";
  const configuration = {
   "id": "formulaire-contact-resparc",
-  "ariaLabel": "Demande d’inscription resparc",
-  "titre": "Responsable parc",
-  "sousTitre": "Rejoignez le réseau",
-  "sousTitreClasse": "lcdp-box-formulaire__subtitle--accent",
+  "ariaLabel": "Formulaire de contact",
+  "titre": "Formulaire de contact",
+  "sousTitre": "La clé du parc",
   "validationNative": true,
   "champs": [
     {
