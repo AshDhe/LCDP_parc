@@ -91,10 +91,13 @@
   const form=await window.LCDP_creerFormulaire("formulaire-resparc-slot",configuration);
   configuration.champs.forEach((champ, index) => {
     const controle = form.elements.namedItem(champ.name);
+    if (!controle) return;
     controle.setAttribute("aria-label", champ.label);
-    const zone = controle.closest(".lcdp-box-champ-formulaire").querySelector(".lcdp-box-champ-formulaire__label-zone");
+    const zone = controle.closest(".lcdp-box-champ-formulaire")?.querySelector(".lcdp-box-champ-formulaire__label-zone");
+    if (!zone) return;
     if (index === 0) {
-      zone.querySelector("label").textContent = "Information de contact";
+      const label = zone.querySelector("label");
+      if (label) label.textContent = "Information de contact";
     } else {
       zone.hidden = true;
     }
