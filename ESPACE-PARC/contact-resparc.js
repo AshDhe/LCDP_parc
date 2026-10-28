@@ -78,13 +78,34 @@
       <ul>
         <li>Inscrivez votre parc dans notre dynamique territoriale unique.</li>
         <li>Gardez le contrôle et la visibilité de l'accès à votre parc pour nos membres qualifiés La Clé du Parc.</li>
-        <li>Devenez un acteur discret et reconnu du dynamisme territorial autour de votre parc.</li>
+        <li>Devenez un actor discret et reconnu du dynamisme territorial autour de votre parc.</li>
       </ul>
     </section>`
-};
+ };
+
  window.LCDP_initialiserContactResparc = async function() {
-  const form=await window.LCDP_creerFormulaire("formulaire-resparc-slot",configuration);
-  const endpoint=window.SITE_CONFIG?.workerContactResparcUrl || "https://lacleduparc.fr/api/contact-resparc";
-  await window.LCDP_brancherFormulaireProtege(form,{type:"resparc",endpoint,champs:configuration.champs});
+  let attenteFormulaire = null;
+
+  // 1. DÉMARRAGE : On affiche le GIF de chargement immédiatement
+  if (window.LCDP_chargement) {
+    attenteFormulaire = window.LCDP_chargement.afficher();
+  }
+
+  try {
+    // 2. ATTENTE : Exécution des fonctions asynchrones de chargement du formulaire
+    const form = await window.LCDP_creerFormulaire("formulaire-resparc-slot", configuration);
+    const endpoint = window.SITE_CONFIG?.workerContactResparcUrl || "https://lacleduparc.fr";
+    await window.LCDP_brancherFormulaireProtege(form, { type: "resparc", endpoint, champs: configuration.champs });
+
+  } catch (error) {
+    // Gestion d'une éventuelle erreur de l'application pendant le chargement
+    console.error("Erreur lors de l'initialisation du formulaire responsable parc :", error);
+
+  } finally {
+    // 3. ARRÊT : Quoi qu'il arrive (succès ou échec), on masque le GIF dès que le processus est fini
+    if (attenteFormulaire && window.LCDP_chargement) {
+      window.LCDP_chargement.masquer(attenteFormulaire);
+    }
+  }
  };
 })();
