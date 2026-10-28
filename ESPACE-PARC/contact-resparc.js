@@ -74,7 +74,7 @@
   },
   "introHtml": `<div class="lcdp-box-formulaire__note">Cette demande ne crée pas de compte PARC. Notre équipe vous recontacte pour étudier votre demande.</div>
     <section class="lcdp-boxtext__content" aria-labelledby="contact-parc-compte-title">
-      <h2 id="contact-parc-compte-title" class="lcdp-text-strong-left">Le compte PARC La Clé du Parc</h2>
+      <h2 id="contact-parc-compte-title" class="lcdp-text-strong-left" style="font-weight: 700 !important;">Le compte PARC La Clé du Parc</h2>
       <ul>
         <li>Inscrivez votre parc dans notre dynamique territoriale unique.</li>
         <li>Gardez le contrôle et la visibilité de l'accès à votre parc pour nos membres qualifiés La Clé du Parc.</li>
