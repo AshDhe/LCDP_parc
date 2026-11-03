@@ -66,12 +66,6 @@
     const slot = document.getElementById("lcdp-bandeau-slot");
     slot.replaceChildren(await fragment(espace("/ESPACE-PARC/box-bandeau-nav-parc.html")));
     appliquerRoutes(slot);
-    const logo = slot.querySelector(".lcdp-box-bandeau-nav__logo");
-    if (logo) logo.addEventListener("error", () => {
-      // Repli sur le favicon déjà référencé par cssbase.css ; aucun logo inventé.
-      const secours = publicUrl("/favicon-32x32.png");
-      if (logo.src !== secours) logo.src = secours;
-    }, { once: true });
     await scriptUnique(espace("/ESPACE-PARC/box-menu-burger-parc.js"));
     if (typeof window.LCDP_initialiserMenuBurgerParc !== "function") throw new Error("Burger PARC indisponible.");
     await window.LCDP_initialiserMenuBurgerParc({ endpoint, urlEspace: espace, urlPublic: publicUrl, urlObjet: objet, ouvrirAlerte: alerte, redirection: rediriger });
