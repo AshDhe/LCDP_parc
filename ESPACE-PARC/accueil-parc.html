@@ -1,17 +1,55 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Accueil espace parc - La Clé du Parc</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><script src="../config.js"></script><script>window.SITE_BASE=window.SITE_CONFIG?.parcBaseUrl||"";</script><script>(()=>{const c=window.SITE_CONFIG||{};const root=c.objetBaseUrl||c.OBJET_BASE||((c.publicBaseUrl||"").replace(/\/+$/,'')+'/OBJET');for(const p of ['/CSSBASE/cssbase.css','/BOX/02-box-bandeau-nav.css','/BOX/02-box-menu-burger.css','/BOX/02-box-footer.css','/BOX/02-box-alerte.css','/BOX/02-box-menu-bouton.css','/BOX/04-box-liste-card.css'])document.write('<link rel="stylesheet" href="'+String(root).replace(/\/+$/,'')+p+'">');})();</script>
-<link rel="stylesheet" href="./accueil-parc.css?v=20261103-1"></head><body class="lcdp-page-accueil-parc">
-<div id="lcdp-accueil-attente" role="status" aria-label="Chargement de l’espace parc"><img class="lcdp-pro-logo-attente" src="" alt="" id="lcdp-chargement-logo"></div>
-<div class="lcdp-site-page"><div id="lcdp-bandeau-slot"></div><main class="lcdp-site-main"><section class="lcdp-page-section"><div class="lcdp-page-container"><div id="lcdp-accueil-erreur" hidden role="alert"><p>Impossible de charger votre espace parc.</p><button type="button" class="lcdp-button lcdp-button-primary" onclick="location.reload()">Réessayer</button></div><noscript>Activez JavaScript pour accéder à cet espace.</noscript><div id="lcdp-accueil-contenu" class="lcdp-page-content lcdp-accueil-parc-content" hidden aria-busy="true">
-              <div class="lcdp-parc-entete">
-                <div class="lcdp-parc-entete__texte">
-                  <p class="lcdp-parc-surtitre">ESPACE PARC</p>
-                  <h1 class="lcdp-pro-titre">Votre compte La Clé du Parc</h1>
-                </div>
-                <div class="lcdp-accueil-actions-compte">
-                  <button class="lcdp-button lcdp-action-parc" id="mon-compte-parc" type="button">Mon compte PARC</button>
-                </div>
-              </div>
-              <div id="lcdp-menu-central-slot" class="lcdp-parc-principal"></div>
-            </div></div></section></main><div id="lcdp-footer-slot"></div><div id="lcdp-lightbox-slot"></div></div>
-<script>(()=>{const c=window.SITE_CONFIG||{};document.getElementById('lcdp-chargement-logo').src=(c.objetUrl?c.objetUrl('/IMAG/LOGO/logo-officiel-espaces-pro.webp'):(c.objetBaseUrl||c.OBJET_BASE||'')+'/IMAG/LOGO/logo-officiel-espaces-pro.webp');})();</script>
-<script src="./accueil-parc.js"></script><script>document.getElementById("mon-compte-parc").addEventListener("click",()=>window.alert("La page Mon compte PARC sera créée prochainement."));</script></body></html>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Accueil espace parc - La Clé du Parc</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <script src="../config.js"></script>
+  <script>
+  (()=>{
+    const c=window.SITE_CONFIG||{};
+    const root=String(c.objetBaseUrl||c.OBJET_BASE||((c.publicBaseUrl||'').replace(/\/+$/,'')+'/OBJET')).replace(/\/+$/,'');
+    window.SITE_BASE=c.parcBaseUrl||'';
+    for (const path of ['/CSSBASE/cssbase.css','/BOX/02-box-bandeau-nav.css','/BOX/01-box-text.css','/BOX/02-box-menu-burger.css','/BOX/02-box-alerte.css','/BOX/02-box-footer.css','/BOX/02-box-menu-bouton.css','/BOX/pictowait.css','/BOX/04-box-liste-card.css']) document.write('<link rel="stylesheet" href="'+root+path+'">');
+  })();
+  </script>
+</head>
+<body class="lcdp-page-accueil-parc">
+  <div id="lcdp-accueil-attente" class="lcdp-pictowait" role="status" aria-label="Chargement de votre espace parc">
+    <img class="lcdp-pictowait__image" alt="" width="64" height="64" id="lcdp-chargement-logo">
+  </div>
+  <div class="lcdp-site-page">
+    <div id="lcdp-bandeau-slot"></div>
+    <main class="lcdp-site-main">
+      <section class="lcdp-page-section">
+        <div class="lcdp-page-container">
+          <div id="lcdp-accueil-erreur" hidden role="alert">
+            <p>Impossible de charger votre espace parc.</p>
+            <button type="button" class="lcdp-button lcdp-button-primary" onclick="window.location.reload()">Réessayer</button>
+          </div>
+          <noscript>Activez JavaScript pour accéder à votre espace parc.</noscript>
+          <div id="lcdp-accueil-contenu" class="lcdp-page-content lcdp-stack-large" hidden aria-busy="true">
+            <div class="lcdp-accueil-intro">
+              <p class="lcdp-text-strong-lead lcdp-accueil-mention">Bonjour, c’est à vous.</p>
+            </div>
+            <div class="lcdp-accueil-actions-compte"><button class="lcdp-button lcdp-button-accueil-parc" id="mon-compte-parc" type="button">Mon compte PARC</button></div>
+            <div id="lcdp-menu-central-slot" class="lcdp-stack"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <div id="lcdp-footer-slot"></div>
+    <div id="lcdp-lightbox-slot"></div>
+  </div>
+  <script>
+  (()=>{
+    const c=window.SITE_CONFIG||{};
+    const u=typeof c.objetUrl==='function'?c.objetUrl('/BOX/pictowait.gif'):(String(c.objetBaseUrl||c.OBJET_BASE||'').replace(/\/+$/,'')+'/BOX/pictowait.gif');
+    document.getElementById('lcdp-chargement-logo').src=u;
+  })();
+  </script>
+  <script src="./accueil-parc.js"></script>
+  <script>document.getElementById('mon-compte-parc').addEventListener('click',()=>window.alert('La page Mon compte PARC sera créée prochainement.'));</script>
+</body>
+</html>
