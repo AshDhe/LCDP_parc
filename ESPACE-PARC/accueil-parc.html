@@ -1,23 +1,17 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Accueil espace parc - La Clé du Parc</title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><script src="../config.js"></script><script>window.SITE_BASE=window.SITE_CONFIG?.parcBaseUrl||"";</script><script>(()=>{const c=window.SITE_CONFIG||{};const root=c.objetBaseUrl||c.OBJET_BASE||((c.publicBaseUrl||"").replace(/\/+$/,'')+'/OBJET');for(const p of ['/CSSBASE/cssbase.css','/BOX/02-box-bandeau-nav.css','/BOX/02-box-menu-burger.css','/BOX/02-box-footer.css','/BOX/02-box-alerte.css','/BOX/02-box-menu-bouton.css','/BOX/04-box-liste-card.css'])document.write('<link rel="stylesheet" href="'+String(root).replace(/\/+$/,'')+p+'">');})();</script>
-<style>
-:root{--lcdp-pro-accent:#d64b68;}
-.lcdp-page-accueil-parc .lcdp-box-bandeau-nav__space-label{color:var(--lcdp-pro-accent);}
-#lcdp-accueil-attente:not([hidden]){position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:white;}
-#lcdp-accueil-attente[hidden],#lcdp-accueil-contenu[hidden],#lcdp-accueil-erreur[hidden]{display:none!important;}
-.lcdp-pro-logo-attente{width:64px;height:64px;object-fit:contain;}
-.lcdp-pro-titre{font-size:clamp(1.4rem,3vw,1.95rem);font-weight:400;margin:0 0 24px;}
-.lcdp-pro-label{color:var(--lcdp-pro-accent);font-size:.95rem;letter-spacing:.04em;margin-bottom:16px;}
-.lcdp-accueil-actions{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:18px;}
-.lcdp-accueil-actions>.lcdp-accueil-picto{box-sizing:border-box;width:160px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:white;border:0;border-radius:12px;cursor:pointer;}
-.lcdp-accueil-picto svg{width:66px;height:66px;}
-.lcdp-accueil-picto span{font-size:15px;}
-.lcdp-action-orange{background:#e89423;}.lcdp-action-green{background:#55733f;}.lcdp-action-coach{background:#8660c8;}.lcdp-action-parc{background:#d64b68;color:#fff;}
-.lcdp-parc-card{display:flex;flex-direction:column;width:100%;border:1px solid #ccd0ca;border-radius:14px;overflow:hidden;background:white;cursor:pointer;text-align:left;padding:0;}
-.lcdp-parc-card__visuel{display:flex;justify-content:center;align-items:center;aspect-ratio:16/10;background:#f2f2f2;color:#555;font-size:14px;}
-.lcdp-parc-card__nom{padding:14px;font-size:18px;color:#253329;}
-.lcdp-accueil-actions-compte{margin-bottom:22px;}.lcdp-accueil-actions-compte button{padding:12px 22px;border:0;border-radius:12px;cursor:pointer;}
-</style></head><body class="lcdp-page-accueil-parc">
+<link rel="stylesheet" href="./accueil-parc.css?v=20261103-1"></head><body class="lcdp-page-accueil-parc">
 <div id="lcdp-accueil-attente" role="status" aria-label="Chargement de l’espace parc"><img class="lcdp-pro-logo-attente" src="" alt="" id="lcdp-chargement-logo"></div>
-<div class="lcdp-site-page"><div id="lcdp-bandeau-slot"></div><main class="lcdp-site-main"><section class="lcdp-page-section"><div class="lcdp-page-container"><div id="lcdp-accueil-erreur" hidden role="alert"><p>Impossible de charger votre espace parc.</p><button type="button" class="lcdp-button lcdp-button-primary" onclick="location.reload()">Réessayer</button></div><noscript>Activez JavaScript pour accéder à cet espace.</noscript><div id="lcdp-accueil-contenu" class="lcdp-page-content lcdp-stack-large" hidden aria-busy="true"><p class="lcdp-pro-label">ESPACE PARC</p><h1 class="lcdp-pro-titre">Votre compte La Clé du Parc</h1><div class="lcdp-accueil-actions-compte"><button class="lcdp-button lcdp-action-parc" id="mon-compte-parc" type="button">Mon compte PARC</button></div><div id="lcdp-menu-central-slot"></div></div></div></section></main><div id="lcdp-footer-slot"></div><div id="lcdp-lightbox-slot"></div></div>
+<div class="lcdp-site-page"><div id="lcdp-bandeau-slot"></div><main class="lcdp-site-main"><section class="lcdp-page-section"><div class="lcdp-page-container"><div id="lcdp-accueil-erreur" hidden role="alert"><p>Impossible de charger votre espace parc.</p><button type="button" class="lcdp-button lcdp-button-primary" onclick="location.reload()">Réessayer</button></div><noscript>Activez JavaScript pour accéder à cet espace.</noscript><div id="lcdp-accueil-contenu" class="lcdp-page-content lcdp-accueil-parc-content" hidden aria-busy="true">
+              <div class="lcdp-parc-entete">
+                <div class="lcdp-parc-entete__texte">
+                  <p class="lcdp-parc-surtitre">ESPACE PARC</p>
+                  <h1 class="lcdp-pro-titre">Votre compte La Clé du Parc</h1>
+                </div>
+                <div class="lcdp-accueil-actions-compte">
+                  <button class="lcdp-button lcdp-action-parc" id="mon-compte-parc" type="button">Mon compte PARC</button>
+                </div>
+              </div>
+              <div id="lcdp-menu-central-slot" class="lcdp-parc-principal"></div>
+            </div></div></section></main><div id="lcdp-footer-slot"></div><div id="lcdp-lightbox-slot"></div></div>
 <script>(()=>{const c=window.SITE_CONFIG||{};document.getElementById('lcdp-chargement-logo').src=(c.objetUrl?c.objetUrl('/IMAG/LOGO/logo-officiel-espaces-pro.webp'):(c.objetBaseUrl||c.OBJET_BASE||'')+'/IMAG/LOGO/logo-officiel-espaces-pro.webp');})();</script>
 <script src="./accueil-parc.js"></script><script>document.getElementById("mon-compte-parc").addEventListener("click",()=>window.alert("La page Mon compte PARC sera créée prochainement."));</script></body></html>
