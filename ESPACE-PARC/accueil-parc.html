@@ -5,6 +5,7 @@
 
   <title>Accueil espace PARC - La Clé du Parc</title>
 
+  <link rel="icon" type="image/png" href="../favicon-32x32.png">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Accueil de votre espace PARC La Clé du Parc.">
 
@@ -44,8 +45,8 @@
       );
 
       window.SITE_BASE = nettoyerBaseUrl(config.parcBaseUrl || config.PARC_BASE || config.siteBase || "");
+      window.LCDP_ESPACE_BASE = window.SITE_BASE;
       window.LCDP_MEMBRE_BASE = membreBase;
-      window.LCDP_ESPACE_BASE = nettoyerBaseUrl(config.parcBaseUrl || config.PARC_BASE || config.siteBase || "");
       window.LCDP_PUBLIC_BASE = publicBase;
       window.LCDP_OBJET_BASE = objetBase;
 
@@ -81,9 +82,8 @@
         "/BOX/02-box-menu-burger.css",
         "/BOX/02-box-alerte.css",
         "/BOX/02-box-dialogue-bouton.css",
-        "/BOX/02-box-menu-bouton.css",
-        "/BOX/04-box-card-abonnement.css",
         "/BOX/04-box-liste-card.css",
+        "/BOX/04-box-card-abonnement.css",
         "/BOX/02-box-footer.css",
         "/BOX/pictowait.css"
       ];
@@ -97,10 +97,10 @@
       });
     })();
   </script>
-  </head>
+</head>
 
-<body class="lcdp-page-accueil-parc">
-  <div id="lcdp-accueil-attente" role="status" aria-label="Chargement de votre espace parc" style="display:flex">
+<body class="lcdp-page-accueil-membre lcdp-page-accueil-parc">
+  <div id="lcdp-accueil-attente" role="status" aria-label="Chargement de votre espace PARC" style="display:flex">
             <script>document.write('<img src="' + window.LCDP_urlObjet('/BOX/pictowait.gif') + '" alt="" width="64" height="64">');</script>
           </div>
   <div class="lcdp-site-page">
@@ -113,10 +113,10 @@
         <div class="lcdp-page-container">
 
           <div id="lcdp-accueil-erreur" hidden role="alert">
-            <p>Impossible de charger votre espace parc.</p>
+            <p>Impossible de charger votre espace PARC.</p>
             <button type="button" class="lcdp-button lcdp-button-primary" onclick="window.location.reload()">Réessayer</button>
           </div>
-          <noscript>Activez JavaScript pour accéder à votre espace parc.</noscript>
+          <noscript>Activez JavaScript pour accéder à votre espace PARC.</noscript>
           <div id="lcdp-accueil-contenu" class="lcdp-page-content lcdp-stack-large" hidden aria-busy="true">
 
             <div class="lcdp-accueil-intro">
@@ -129,7 +129,6 @@
               </p>
             </div>
 
-            <div class="lcdp-accueil-actions-compte"><button class="lcdp-button lcdp-button-accueil-parc" id="mon-compte-parc" type="button">Mon compte PARC</button></div>
             <div id="lcdp-menu-central-slot" class="lcdp-stack"></div>
             <div id="lcdp-navigation-attente" class="lcdp-pictowait" hidden role="status" aria-live="polite">
               <script>document.write('<img class="lcdp-pictowait__image" src="' + window.LCDP_urlObjet('/BOX/pictowait.svg') + '" alt="">');</script>
@@ -152,7 +151,6 @@
       document.getElementById("lcdp-accueil-erreur").hidden = false;
     };
   </script>
-  <script src="./accueil-parc.js?v=20261103-parite-membre" onerror="window.LCDP_echecAccueilParc()"></script>
-<script>document.getElementById("mon-compte-parc")?.addEventListener("click",()=>window.alert("La page Mon compte PARC sera créée prochainement."));</script>
+  <script src="./accueil-parc.js?v=20261103-accueil-iso-v3" onerror="window.LCDP_echecAccueilParc()"></script>
 </body>
 </html>
