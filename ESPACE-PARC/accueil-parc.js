@@ -92,101 +92,39 @@
     mention.textContent = "ESPACE PARC";
   }
   async function afficherMenuEtParcs() {
-    // Accueil PARC : aucun bouton générique dans le contenu.
-    // Les établissements sont représentés par le composant Card Parc diaporama existant.
+    // Un seul recto de Card Parc, à la place des boutons de l'accueil MEMBRE.
+    // Aucun titre de liste, aucun appel /parcs, aucune navigation ni retournement.
     menu.replaceChildren();
-    const titre = document.createElement("h2");
-    titre.className = "lcdp-box-liste-card__title";
-    titre.textContent = "Mes parcs";
-    menu.append(titre);
-    const fragmentListe = await fragment(objet("/BOX/04-box-liste-card-diaporama.html"));
-    const listeParcs = fragmentListe.querySelector("[data-lcdp-liste-card-diaporama-list]");
-    if (!listeParcs) throw new Error("Composant diaporama des parcs incomplet.");
-    menu.append(fragmentListe);
+    const composant = await fragment(objet("/BOX/04-box-card-parc-diaporama.html"));
+    const carte = composant.querySelector("[data-lcdp-card-parc-diaporama]");
+    const recto = carte?.querySelector(".lcdp-box-card-parc-diaporama__face--recto");
+    const ouverture = carte?.querySelector("[data-lcdp-diaporama-retourner]");
+    if (!carte || !recto || !ouverture) throw new Error("Recto Card Parc indisponible.");
 
-    const message = document.createElement("p");
-    message.className = "lcdp-box-liste-card__message";
-    message.hidden = true;
-    menu.append(message);
-    const r = await fetch(endpoint + "/parcs", {
-      method: "GET", credentials: "include", cache: "no-store",
-      headers: { Accept: "application/json" }
-    });
-    if (r.status === 401) { rediriger(); return false; }
-    const d = await r.json().catch(() => null);
-    if (!r.ok || d?.success !== true || !Array.isArray(d.parcs)) {
-      // La route /parcs n'est pas présente dans le Worker transmis.
-      message.hidden = false;
-      message.dataset.lcdpMessageType = "erreur";
-      message.textContent = "Impossible de charger les parcs associés à votre compte.";
-      return true;
-    }
-    if (d.parcs.length === 0) {
-      message.hidden = false;
-      message.textContent = "Aucun parc associé à ce compte à ce jour.";
-      return true;
-    }
-    for (const parc of d.parcs) {
-      const nom = String(parc.nomparccontact || parc.nomparc || "").trim();
-      // Ne pas afficher une carte fictive en cas de données incomplètes.
-      if (!nom) continue;
-      const carteFragment = await fragment(objet("/BOX/04-box-card-parc-diaporama.html"));
-      const carte = carteFragment.querySelector("[data-lcdp-card-parc-diaporama]");
-      const ouvrir = carte?.querySelector("[data-lcdp-diaporama-retourner]");
-      const fermer = carte?.querySelector("[data-lcdp-diaporama-fermer]");
-      const dos = carte?.querySelector("[data-lcdp-diaporama-dos]");
-      const contenuDos = carte?.querySelector("[data-lcdp-diaporama-dos-contenu]");
-      if (!carte || !ouvrir || !fermer || !dos || !contenuDos) throw new Error("Card Parc incomplète.");
-
-      // La photo provient exclusivement de la réponse du Worker, si elle est fournie.
-      const sourceImage = [parc.photoparc, parc.photo, parc.image_url, parc.imageUrl]
-        .find(v => typeof v === "string" && /^https:\/\//i.test(v.trim()));
-      if (sourceImage) {
-        const media = document.createElement("span");
-        media.className = "lcdp-box-card-parc__media";
-        const image = document.createElement("img");
-        image.className = "lcdp-box-card-parc__image";
-        image.alt = "";
-        image.src = sourceImage;
-        image.loading = "lazy";
-        media.append(image);
-        ouvrir.append(media);
-      }
-      const nomRecto = document.createElement("span");
-      nomRecto.className = "lcdp-box-card-parc-diaporama__nom";
-      nomRecto.textContent = nom;
-      ouvrir.append(nomRecto);
-      ouvrir.setAttribute("aria-label", "Découvrir le parc " + nom);
-      const nomVerso = document.createElement("h3");
-      nomVerso.className = "lcdp-box-card-parc__title";
-      nomVerso.textContent = nom;
-      contenuDos.append(nomVerso);
-      // Les six actions de gestion sont réservées à la future page du parc :
-      // aucun bouton inopérant ni URL supposée n'est créé ici.
-      const infos = document.createElement("p");
-      infos.className = "lcdp-box-card-parc__description";
-      infos.textContent = "La page de gestion de ce parc n’est pas encore disponible.";
-      contenuDos.append(infos);
-      ouvrir.addEventListener("click", () => {
-        carte.classList.add("is-retourne");
-        ouvrir.setAttribute("aria-expanded", "true");
-        dos.setAttribute("aria-hidden", "false");
-      });
-      fermer.addEventListener("click", () => {
-        carte.classList.remove("is-retourne");
-        ouvrir.setAttribute("aria-expanded", "false");
-        dos.setAttribute("aria-hidden", "true");
-        ouvrir.focus();
-      });
-      listeParcs.append(carte);
-      requestAnimationFrame(() => carte.classList.add("is-ready"));
-    }
-    if (!listeParcs.children.length) {
-      message.hidden = false;
-      message.textContent = "Aucun parc exploitable dans les données reçues.";
-    }
+    // Le composant est réutilisé tel quel, mais la face arrière et son bouton
+    // sont retirés : cette vitrine ne doit déclencher aucune action.
+    carte.querySelector("[data-lcdp-diaporama-dos]")?.remove();
+    const face = document.createElement("div");
+    face.className = ouverture.className;
+    const media = document.createElement("span");
+    media.className = "lcdp-box-card-parc__media";
+    const image = document.createElement("img");
+    image.className = "lcdp-box-card-parc__image";
+    image.src = "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=600&q=80";
+    image.alt = "Photographie illustrative d'un espace boisé";
+    image.loading = "eager";
+    media.append(image);
+    const nom = document.createElement("span");
+    nom.className = "lcdp-box-card-parc-diaporama__nom";
+    nom.textContent = "PARC";
+    face.append(media, nom);
+    ouverture.replaceWith(face);
+    carte.style.width = "176px";
+    carte.style.maxWidth = "100%";
+    menu.append(carte);
     return true;
   }
+
   async function demarrer() {
     if (!endpoint) { window.LCDP_echecAccueilParc(); return; }
     try {
