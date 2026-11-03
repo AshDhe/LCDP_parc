@@ -83,6 +83,8 @@
         "/BOX/02-box-alerte.css",
         "/BOX/02-box-dialogue-bouton.css",
         "/BOX/04-box-liste-card.css",
+        "/BOX/04-box-liste-card-diaporama.css",
+        "/BOX/04-box-card-parc-diaporama.css",
         "/BOX/04-box-card-abonnement.css",
         "/BOX/02-box-footer.css",
         "/BOX/pictowait.css"
@@ -97,11 +99,66 @@
       });
     })();
   </script>
+  <style>
+    #lcdp-accueil-contenu[hidden], #lcdp-accueil-erreur[hidden] { display: none !important; }
+    /* Attente initiale : couvre la fenêtre dès le premier affichage. */
+    #lcdp-accueil-attente {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 10000;
+      box-sizing: border-box;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      margin: 0 !important;
+      padding: 0 !important;
+      align-items: center;
+      justify-content: center;
+      background: var(--lcdp-color-surface, #fff);
+    }
+    #lcdp-accueil-attente > img {
+      display: block;
+      flex: 0 0 64px;
+      width: 64px;
+      height: 64px;
+      margin: 0;
+    }
+
+    /* Attente de navigation : superposition centrée, sans déplacer les boutons. */
+    #lcdp-navigation-attente:not([hidden]) {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 16px;
+      box-sizing: border-box;
+      background: var(--lcdp-color-surface, #fff);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* L'indicateur est toujours au centre du viewport, pas du contenu de page. */
+    #lcdp-navigation-attente .lcdp-pictowait__image {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      margin: 0 !important;
+      max-width: none;
+    }
+    #lcdp-navigation-attente[hidden] {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body class="lcdp-page-accueil-membre lcdp-page-accueil-parc">
   <div id="lcdp-accueil-attente" role="status" aria-label="Chargement de votre espace PARC" style="display:flex">
-            <script>document.write('<img src="' + window.LCDP_urlObjet('/BOX/pictowait.gif') + '" alt="" width="64" height="64">');</script>
+            <script>document.write('<img src="' + window.LCDP_urlObjet('/BOX/pictowait.svg') + '" alt="" width="64" height="64">');</script>
           </div>
   <div class="lcdp-site-page">
 
@@ -151,6 +208,6 @@
       document.getElementById("lcdp-accueil-erreur").hidden = false;
     };
   </script>
-  <script src="./accueil-parc.js?v=20261103-accueil-iso-v3" onerror="window.LCDP_echecAccueilParc()"></script>
+  <script src="./accueil-parc.js?v=20261103-cartes-parc-burger-v2" onerror="window.LCDP_echecAccueilParc()"></script>
 </body>
 </html>

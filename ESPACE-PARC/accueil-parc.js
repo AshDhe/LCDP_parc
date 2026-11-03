@@ -92,35 +92,34 @@
     mention.textContent = "ESPACE PARC";
   }
   async function afficherMenuEtParcs() {
-    menu.replaceChildren(await fragment(objet("/BOX/02-box-menu-bouton.html")));
-    const liste = menu.querySelector("[data-lcdp-menu-bouton-list]");
-    if (!liste) throw new Error("Menu principal incomplet.");
-    liste.classList.add("lcdp-accueil-actions");
-    const bouton = document.createElement("button");
-    bouton.type = "button";
-    bouton.className = "lcdp-button lcdp-button-compte lcdp-button-compte--parc";
-    bouton.textContent = "Mon compte PARC";
-    bouton.addEventListener("click", () => alerte("La page Mon compte de l’espace PARC sera créée prochainement."));
-    liste.append(bouton);
-
-    const enveloppe = document.createElement("div");
-    enveloppe.append(await fragment(objet("/BOX/04-box-liste-card.html")));
-    const bloc = enveloppe.querySelector("[data-lcdp-box-liste-card]");
-    const listeParcs = enveloppe.querySelector("[data-lcdp-liste-card-list]");
-    const titre = enveloppe.querySelector("[data-lcdp-liste-card-title]");
-    const message = enveloppe.querySelector("[data-lcdp-liste-card-message]");
-    if (!bloc || !listeParcs || !titre || !message) throw new Error("Composant Mes parcs incomplet.");
+    // Accueil PARC : aucun bouton générique dans le contenu.
+    // Les établissements sont représentés par le composant Card Parc diaporama existant.
+    menu.replaceChildren();
+    const titre = document.createElement("h2");
+    titre.className = "lcdp-box-liste-card__title";
     titre.textContent = "Mes parcs";
-    menu.append(enveloppe);
+    menu.append(titre);
+    const fragmentListe = await fragment(objet("/BOX/04-box-liste-card-diaporama.html"));
+    const listeParcs = fragmentListe.querySelector("[data-lcdp-liste-card-diaporama-list]");
+    if (!listeParcs) throw new Error("Composant diaporama des parcs incomplet.");
+    menu.append(fragmentListe);
 
-    const r = await fetch(endpoint + "/parcs", { method: "GET", credentials: "include", cache: "no-store", headers: { Accept: "application/json" } });
+    const message = document.createElement("p");
+    message.className = "lcdp-box-liste-card__message";
+    message.hidden = true;
+    menu.append(message);
+    const r = await fetch(endpoint + "/parcs", {
+      method: "GET", credentials: "include", cache: "no-store",
+      headers: { Accept: "application/json" }
+    });
     if (r.status === 401) { rediriger(); return false; }
     const d = await r.json().catch(() => null);
     if (!r.ok || d?.success !== true || !Array.isArray(d.parcs)) {
+      // La route /parcs n'est pas présente dans le Worker transmis.
       message.hidden = false;
       message.dataset.lcdpMessageType = "erreur";
       message.textContent = "Impossible de charger les parcs associés à votre compte.";
-      return true; // Ne pas masquer toute la page pour un incident de liste.
+      return true;
     }
     if (d.parcs.length === 0) {
       message.hidden = false;
@@ -128,13 +127,63 @@
       return true;
     }
     for (const parc of d.parcs) {
-      // L'API actuelle ne renvoie ni photo ni slug de page : aucune image/lien fictif.
-      const boutonParc = document.createElement("button");
-      boutonParc.type = "button";
-      boutonParc.className = "lcdp-button lcdp-button-compte lcdp-button-compte--parc";
-      boutonParc.textContent = String(parc.nomparccontact || "Parc associé");
-      boutonParc.addEventListener("click", () => alerte("La page de ce parc sera disponible après le raccordement de sa fiche."));
-      listeParcs.append(boutonParc);
+      const nom = String(parc.nomparccontact || parc.nomparc || "").trim();
+      // Ne pas afficher une carte fictive en cas de données incomplètes.
+      if (!nom) continue;
+      const carteFragment = await fragment(objet("/BOX/04-box-card-parc-diaporama.html"));
+      const carte = carteFragment.querySelector("[data-lcdp-card-parc-diaporama]");
+      const ouvrir = carte?.querySelector("[data-lcdp-diaporama-retourner]");
+      const fermer = carte?.querySelector("[data-lcdp-diaporama-fermer]");
+      const dos = carte?.querySelector("[data-lcdp-diaporama-dos]");
+      const contenuDos = carte?.querySelector("[data-lcdp-diaporama-dos-contenu]");
+      if (!carte || !ouvrir || !fermer || !dos || !contenuDos) throw new Error("Card Parc incomplète.");
+
+      // La photo provient exclusivement de la réponse du Worker, si elle est fournie.
+      const sourceImage = [parc.photoparc, parc.photo, parc.image_url, parc.imageUrl]
+        .find(v => typeof v === "string" && /^https:\/\//i.test(v.trim()));
+      if (sourceImage) {
+        const media = document.createElement("span");
+        media.className = "lcdp-box-card-parc__media";
+        const image = document.createElement("img");
+        image.className = "lcdp-box-card-parc__image";
+        image.alt = "";
+        image.src = sourceImage;
+        image.loading = "lazy";
+        media.append(image);
+        ouvrir.append(media);
+      }
+      const nomRecto = document.createElement("span");
+      nomRecto.className = "lcdp-box-card-parc-diaporama__nom";
+      nomRecto.textContent = nom;
+      ouvrir.append(nomRecto);
+      ouvrir.setAttribute("aria-label", "Découvrir le parc " + nom);
+      const nomVerso = document.createElement("h3");
+      nomVerso.className = "lcdp-box-card-parc__title";
+      nomVerso.textContent = nom;
+      contenuDos.append(nomVerso);
+      // Les six actions de gestion sont réservées à la future page du parc :
+      // aucun bouton inopérant ni URL supposée n'est créé ici.
+      const infos = document.createElement("p");
+      infos.className = "lcdp-box-card-parc__description";
+      infos.textContent = "La page de gestion de ce parc n’est pas encore disponible.";
+      contenuDos.append(infos);
+      ouvrir.addEventListener("click", () => {
+        carte.classList.add("is-retourne");
+        ouvrir.setAttribute("aria-expanded", "true");
+        dos.setAttribute("aria-hidden", "false");
+      });
+      fermer.addEventListener("click", () => {
+        carte.classList.remove("is-retourne");
+        ouvrir.setAttribute("aria-expanded", "false");
+        dos.setAttribute("aria-hidden", "true");
+        ouvrir.focus();
+      });
+      listeParcs.append(carte);
+      requestAnimationFrame(() => carte.classList.add("is-ready"));
+    }
+    if (!listeParcs.children.length) {
+      message.hidden = false;
+      message.textContent = "Aucun parc exploitable dans les données reçues.";
     }
     return true;
   }
@@ -144,7 +193,7 @@
       const r = await fetch(endpoint + "/session", { credentials: "include", cache: "no-store", headers: { Accept: "application/json" } });
       if (r.status === 401) { rediriger(); return; }
       const session = await r.json().catch(() => null);
-      if (!r.ok || session?.success !== true || !session.id) throw new Error("Session PARC indisponible.");
+      if (!r.ok || session?.success !== true || !(session.idresp || session.id)) throw new Error("Session PARC indisponible.");
       presenterCompte(session);
       const composants = [bandeau().catch(e => console.warn("Bandeau PARC :", e)), footer().catch(e => console.warn("Footer PARC :", e))];
       const listeChargee = await afficherMenuEtParcs();
