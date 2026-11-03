@@ -49,6 +49,8 @@
 
     workerContactResparcUrl: workerContact,
     WORKER_CONTACT_RESPARC_URL: workerContact,
+    workerMdptokenzParcUrl: "https://mdptokenz-parc-api.lacleduparc.fr",
+    WORKER_MDPTOKENZ_PARC_URL: "https://mdptokenz-parc-api.lacleduparc.fr",
     workerConnexionParcUrl: "https://connexion-parc-api.lacleduparc.fr",
     WORKER_CONNEXION_PARC_URL: "https://connexion-parc-api.lacleduparc.fr",
     workerUserRouteurUrl: "https://user-routeur-api.lacleduparc.fr",
