@@ -18,6 +18,68 @@
   // Couleur PARC : utilise exclusivement les variables déjà déclarées dans cssbase.css.
   document.body.style.setProperty("--lcdp-color-logo-green", "var(--lcdp-color-parc)");
 
+
+  // CAL.COM : les mêmes deux événements sont utilisés dans PARC et COACH.
+  // Le déclencheur natif data-cal-link exploite la modale fournie par Cal.com.
+  const LCDP_CAL = {
+    onboarding: "hugues-pavret-5dysvw/onboarding",
+    crm: "hugues-pavret-5dysvw/crm"
+  };
+  let calScriptPromise = null;
+  async function preparerCal() {
+    if (calScriptPromise) return calScriptPromise;
+    calScriptPromise = new Promise((resolve, reject) => {
+      // SDK Cal.com officiel, sans nouvelle feuille CSS ni fenêtre maison.
+      const script = document.createElement("script");
+      script.src = "https://app.cal.com/embed/embed.js";
+      script.onload = () => {
+        try {
+          if (typeof window.Cal !== "function") throw new Error("Cal.com indisponible.");
+          window.Cal("init", "lcdp-rdv", { origin: "https://cal.com" });
+          resolve();
+        } catch (e) { reject(e); }
+      };
+      script.onerror = () => reject(new Error("Le calendrier Cal.com n'a pas pu être chargé."));
+      document.head.appendChild(script);
+    });
+    return calScriptPromise;
+  }
+  async function ouvrirRdvCal(type) {
+    const calLink = LCDP_CAL[type];
+    if (!calLink) return;
+    try {
+      await preparerCal();
+      // Cal.com attache son ouverture modale aux éléments data-cal-link.
+      const declencheur = document.createElement("button");
+      declencheur.type = "button";
+      declencheur.hidden = true;
+      declencheur.dataset.calLink = calLink;
+      declencheur.dataset.calNamespace = "lcdp-rdv";
+      declencheur.dataset.calConfig = JSON.stringify({ layout: "month_view" });
+      document.body.appendChild(declencheur);
+      declencheur.click();
+      declencheur.remove();
+    } catch (e) {
+      console.error("Cal.com :", e);
+      await alerte("Le calendrier de rendez-vous est momentanément indisponible.");
+    }
+  }
+  window.LCDP_ouvrirRdvCal = ouvrirRdvCal;
+  function afficherOnboardingInitial(session, espaceNom) {
+    const identifiant = String(session.idresp || session.idcoach || session.id || "").trim();
+    if (!identifiant) return;
+    const cle = "lcdp:cal:onboarding:v1:" + espaceNom + ":" + identifiant;
+    try {
+      if (localStorage.getItem(cle) === "vu") return;
+      localStorage.setItem(cle, "vu");
+    } catch (e) {
+      // En cas de stockage interdit, pas d'ouverture répétée à chaque rafraîchissement.
+      console.warn("Mémorisation ONBOARDING indisponible", e);
+      return;
+    }
+    ouvrirRdvCal("onboarding");
+  }
+
   function masquerAttente() { attente.hidden = true; attente.style.display = "none"; }
   function rediriger() { window.location.replace(publicUrl("/ESPACE-PUBLIC/connexion-parc.html?source=accueil-parc&session=inactive")); }
   async function fragment(url) {
@@ -66,7 +128,7 @@
     const slot = document.getElementById("lcdp-bandeau-slot");
     slot.replaceChildren(await fragment(espace("/ESPACE-PARC/box-bandeau-nav-parc.html")));
     appliquerRoutes(slot);
-    await scriptUnique(espace("/ESPACE-PARC/box-menu-burger-parc.js"));
+    await scriptUnique(espace("/ESPACE-PARC/box-menu-burger-parc.js?v=20261104-cal-rdv-v1"));
     if (typeof window.LCDP_initialiserMenuBurgerParc !== "function") throw new Error("Burger PARC indisponible.");
     await window.LCDP_initialiserMenuBurgerParc({ endpoint, urlEspace: espace, urlPublic: publicUrl, urlObjet: objet, ouvrirAlerte: alerte, redirection: rediriger });
   }
@@ -135,6 +197,7 @@
       contenu.setAttribute("aria-busy", "false");
       erreur.hidden = true;
       masquerAttente();
+      afficherOnboardingInitial(session, "parc");
     } catch (e) {
       console.error("Accueil PARC :", e);
       masquerAttente();
