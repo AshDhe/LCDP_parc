@@ -26,9 +26,11 @@
   };
   const CAL_ORIGIN = "https://cal.com";
   let calPrepare = false;
+  let cleOnboarding = "";
+  let calendrierActif = "";
   function preparerCal() {
     if (calPrepare) return;
-    // Chargeur officiel Cal.com : crée l'API de commandes avant embed.js.
+    // Chargeur Cal.com déjà utilisé dans la livraison précédente.
     ((C, A, L) => {
       const p = (a, ar) => { a.q.push(ar); };
       const d = C.document;
@@ -37,7 +39,9 @@
         if (!cal.loaded) {
           cal.ns = {};
           cal.q = cal.q || [];
-          d.head.appendChild(d.createElement("script")).src = A;
+          const script = d.createElement("script");
+          script.src = A;
+          d.head.appendChild(script);
           cal.loaded = true;
         }
         if (ar[0] === L) {
@@ -55,6 +59,19 @@
       };
     })(window, "https://app.cal.com/embed/embed.js", "init");
     window.Cal("init", "lcdp-rdv", { origin: CAL_ORIGIN });
+    const cal = window.Cal?.ns?.["lcdp-rdv"];
+    if (typeof cal === "function") {
+      const confirmerReservation = (event) => {
+        if (calendrierActif !== "onboarding" || !cleOnboarding) return;
+        const info = event?.detail?.data || {};
+        const slug = String(info?.eventType?.slug || info?.eventTypeSlug || "").toLowerCase();
+        if (slug && slug !== "onboarding") return;
+        try { localStorage.setItem(cleOnboarding, "reserve"); }
+        catch (e) { console.warn("ONBOARDING : mémorisation non disponible", e); }
+      };
+      cal("on", { action: "bookingSuccessful", callback: confirmerReservation });
+      cal("on", { action: "bookingSuccessfulV2", callback: confirmerReservation });
+    }
     calPrepare = true;
   }
   function ouvrirRdvCal(type) {
@@ -64,11 +81,11 @@
       preparerCal();
       const cal = window.Cal?.ns?.["lcdp-rdv"];
       if (typeof cal !== "function") throw new Error("API Cal.com indisponible");
+      calendrierActif = type;
       cal("modal", { calLink: lien, config: { layout: "month_view" } });
       return true;
     } catch (e) {
       console.error("Cal.com :", e);
-      // Une panne d'intégration ne bloque jamais la prise de rendez-vous.
       window.open(CAL_ORIGIN + "/" + lien, "_blank", "noopener,noreferrer");
       return false;
     }
@@ -77,16 +94,11 @@
   function afficherOnboardingInitial(session, espaceNom) {
     const identifiant = String(session.idresp || session.idcoach || session.id || "").trim();
     if (!identifiant) return;
-    const cle = "lcdp:cal:onboarding:v1:" + espaceNom + ":" + identifiant;
-    try {
-      if (localStorage.getItem(cle) === "vu") return;
-    } catch (e) {
-      console.warn("Mémorisation ONBOARDING indisponible", e);
-    }
-    if (ouvrirRdvCal("onboarding")) {
-      try { localStorage.setItem(cle, "vu"); }
-      catch (e) { console.warn("Mémorisation ONBOARDING indisponible", e); }
-    }
+    cleOnboarding = "lcdp:cal:onboarding:v2:" + espaceNom + ":" + identifiant;
+    try { if (localStorage.getItem(cleOnboarding) === "reserve") return; }
+    catch (e) { console.warn("ONBOARDING : mémorisation non disponible", e); }
+    // Une simple ouverture ou fermeture n'enregistre plus de réservation.
+    ouvrirRdvCal("onboarding");
   }
 
   function masquerAttente() { attente.hidden = true; attente.style.display = "none"; }
