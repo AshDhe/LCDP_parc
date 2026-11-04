@@ -19,49 +19,58 @@
   document.body.style.setProperty("--lcdp-color-logo-green", "var(--lcdp-color-parc)");
 
 
-  // CAL.COM : les mêmes deux événements sont utilisés dans PARC et COACH.
-  // Le déclencheur natif data-cal-link exploite la modale fournie par Cal.com.
+  // Initialise Cal.com selon le chargeur officiel, avec espace de noms.
   const LCDP_CAL = {
     onboarding: "hugues-pavret-5dysvw/onboarding",
     crm: "hugues-pavret-5dysvw/crm"
   };
-  let calScriptPromise = null;
-  async function preparerCal() {
-    if (calScriptPromise) return calScriptPromise;
-    calScriptPromise = new Promise((resolve, reject) => {
-      // SDK Cal.com officiel, sans nouvelle feuille CSS ni fenêtre maison.
-      const script = document.createElement("script");
-      script.src = "https://app.cal.com/embed/embed.js";
-      script.onload = () => {
-        try {
-          if (typeof window.Cal !== "function") throw new Error("Cal.com indisponible.");
-          window.Cal("init", "lcdp-rdv", { origin: "https://cal.com" });
-          resolve();
-        } catch (e) { reject(e); }
+  const CAL_ORIGIN = "https://cal.com";
+  let calPrepare = false;
+  function preparerCal() {
+    if (calPrepare) return;
+    // Chargeur officiel Cal.com : crée l'API de commandes avant embed.js.
+    ((C, A, L) => {
+      const p = (a, ar) => { a.q.push(ar); };
+      const d = C.document;
+      C.Cal = C.Cal || function () {
+        const cal = C.Cal, ar = arguments;
+        if (!cal.loaded) {
+          cal.ns = {};
+          cal.q = cal.q || [];
+          d.head.appendChild(d.createElement("script")).src = A;
+          cal.loaded = true;
+        }
+        if (ar[0] === L) {
+          const api = function () { p(api, arguments); };
+          const namespace = ar[1];
+          api.q = api.q || [];
+          if (typeof namespace === "string") {
+            cal.ns[namespace] = cal.ns[namespace] || api;
+            p(cal.ns[namespace], ar);
+            p(cal, ["initNamespace", namespace]);
+          } else p(cal, ar);
+          return;
+        }
+        p(cal, ar);
       };
-      script.onerror = () => reject(new Error("Le calendrier Cal.com n'a pas pu être chargé."));
-      document.head.appendChild(script);
-    });
-    return calScriptPromise;
+    })(window, "https://app.cal.com/embed/embed.js", "init");
+    window.Cal("init", "lcdp-rdv", { origin: CAL_ORIGIN });
+    calPrepare = true;
   }
-  async function ouvrirRdvCal(type) {
-    const calLink = LCDP_CAL[type];
-    if (!calLink) return;
+  function ouvrirRdvCal(type) {
+    const lien = LCDP_CAL[type];
+    if (!lien) return false;
     try {
-      await preparerCal();
-      // Cal.com attache son ouverture modale aux éléments data-cal-link.
-      const declencheur = document.createElement("button");
-      declencheur.type = "button";
-      declencheur.hidden = true;
-      declencheur.dataset.calLink = calLink;
-      declencheur.dataset.calNamespace = "lcdp-rdv";
-      declencheur.dataset.calConfig = JSON.stringify({ layout: "month_view" });
-      document.body.appendChild(declencheur);
-      declencheur.click();
-      declencheur.remove();
+      preparerCal();
+      const cal = window.Cal?.ns?.["lcdp-rdv"];
+      if (typeof cal !== "function") throw new Error("API Cal.com indisponible");
+      cal("modal", { calLink: lien, config: { layout: "month_view" } });
+      return true;
     } catch (e) {
       console.error("Cal.com :", e);
-      await alerte("Le calendrier de rendez-vous est momentanément indisponible.");
+      // Une panne d'intégration ne bloque jamais la prise de rendez-vous.
+      window.open(CAL_ORIGIN + "/" + lien, "_blank", "noopener,noreferrer");
+      return false;
     }
   }
   window.LCDP_ouvrirRdvCal = ouvrirRdvCal;
@@ -71,13 +80,13 @@
     const cle = "lcdp:cal:onboarding:v1:" + espaceNom + ":" + identifiant;
     try {
       if (localStorage.getItem(cle) === "vu") return;
-      localStorage.setItem(cle, "vu");
     } catch (e) {
-      // En cas de stockage interdit, pas d'ouverture répétée à chaque rafraîchissement.
       console.warn("Mémorisation ONBOARDING indisponible", e);
-      return;
     }
-    ouvrirRdvCal("onboarding");
+    if (ouvrirRdvCal("onboarding")) {
+      try { localStorage.setItem(cle, "vu"); }
+      catch (e) { console.warn("Mémorisation ONBOARDING indisponible", e); }
+    }
   }
 
   function masquerAttente() { attente.hidden = true; attente.style.display = "none"; }
