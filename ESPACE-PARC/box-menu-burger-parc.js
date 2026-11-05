@@ -1,7 +1,7 @@
 (() => {"use strict";
   window.LCDP_initialiserMenuBurgerParc=async function(ctx){
     const slot=document.querySelector("[data-lcdp-burger-slot]");if(!slot)return;
-    const r=await fetch(ctx.urlObjet("/BOX/02-box-menu-burger.html"),{credentials:"omit",cache:"no-cache"});if(!r.ok)throw Error("Menu burger indisponible.");
+    const r=await fetch(ctx.urlObjet("/HTMLBASE/02-menu-burger.html"),{credentials:"omit",cache:"no-cache"});if(!r.ok)throw Error("Menu burger indisponible.");
     const t=document.createElement("template");t.innerHTML=(await r.text()).trim();slot.replaceChildren(t.content.cloneNode(true));
     const bouton=slot.querySelector("[data-lcdp-burger-button]"),nav=slot.querySelector("[data-lcdp-burger-nav]"),liste=slot.querySelector("[data-lcdp-burger-list]");
     if(!bouton||!nav||!liste)throw Error("Menu burger incomplet.");nav.hidden=true;const fermer=()=>{nav.hidden=true;bouton.setAttribute("aria-expanded","false");};
@@ -20,7 +20,7 @@
     ];
     async function changerEspace(){
       const slotDialogue = document.getElementById("lcdp-lightbox-slot");
-      const reponse = await fetch(ctx.urlObjet("/BOX/02-box-dialogue-bouton.html"), { credentials:"omit", cache:"no-cache" });
+      const reponse = await fetch(ctx.urlObjet("/HTMLBASE/02-dialogue-bouton.html"), { credentials:"omit", cache:"no-cache" });
       if (!reponse.ok) { await ctx.ouvrirAlerte("Dialogue indisponible."); return; }
       const template = document.createElement("template");
       template.innerHTML = (await reponse.text()).trim();

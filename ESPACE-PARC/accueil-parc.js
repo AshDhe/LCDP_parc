@@ -130,7 +130,7 @@
   }
   async function alerte(message) {
     try {
-      zoneAlerte.replaceChildren(await fragment(objet("/BOX/02-box-alerte.html")));
+      zoneAlerte.replaceChildren(await fragment(objet("/HTMLBASE/02-alerte.html")));
       const texte = zoneAlerte.querySelector("[data-lcdp-alerte-message]");
       const ok = zoneAlerte.querySelector("[data-lcdp-alerte-ok]");
       const close = zoneAlerte.querySelector("[data-lcdp-alerte-close]");
@@ -155,7 +155,7 @@
   }
   async function footer() {
     const slot = document.getElementById("lcdp-footer-slot");
-    slot.replaceChildren(await fragment(objet("/BOX/02-box-footer.html")));
+    slot.replaceChildren(await fragment(objet("/HTMLBASE/02-footer.html")));
     appliquerRoutes(slot);
   }
   function presenterCompte(d) {
@@ -172,7 +172,7 @@
     // Un seul recto de Card Parc, à la place des boutons de l'accueil MEMBRE.
     // Aucun titre de liste, aucun appel /parcs, aucune navigation ni retournement.
     menu.replaceChildren();
-    const composant = await fragment(objet("/BOX/04-box-card-parc-diaporama.html"));
+    const composant = await fragment(objet("/HTMLBASE/04-card-parc-diaporama.html"));
     const carte = composant.querySelector("[data-lcdp-card-parc-diaporama]");
     const recto = carte?.querySelector(".lcdp-box-card-parc-diaporama__face--recto");
     const ouverture = carte?.querySelector("[data-lcdp-diaporama-retourner]");
