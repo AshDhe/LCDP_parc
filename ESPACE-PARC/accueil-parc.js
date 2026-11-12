@@ -149,7 +149,7 @@
     const slot = document.getElementById("lcdp-bandeau-slot");
     slot.replaceChildren(await fragment(espace("/ESPACE-PARC/box-bandeau-nav-parc.html")));
     appliquerRoutes(slot);
-    await scriptUnique(espace("/ESPACE-PARC/box-menu-burger-parc.js?v=20261104-cal-rdv-v1"));
+    await scriptUnique(espace("/ESPACE-PARC/box-menu-burger-parc.js"));
     if (typeof window.LCDP_initialiserMenuBurgerParc !== "function") throw new Error("Burger PARC indisponible.");
     await window.LCDP_initialiserMenuBurgerParc({ endpoint, urlEspace: espace, urlPublic: publicUrl, urlObjet: objet, ouvrirAlerte: alerte, redirection: rediriger });
   }
