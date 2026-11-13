@@ -163,20 +163,39 @@
       return;
     }
     try {
-      zoneAlerte.replaceChildren(await fragment(objet("/HTMLBASE/02-alerte.html")));
-      const texte = zoneAlerte.querySelector("[data-lcdp-alerte-message]");
-      const ok = zoneAlerte.querySelector("[data-lcdp-alerte-ok]");
-      const close = zoneAlerte.querySelector("[data-lcdp-alerte-close]");
-      const cadre = zoneAlerte.querySelector("[data-lcdp-box-alerte]");
-      if (!texte || !ok || !close || !cadre) throw new Error("Alerte incomplète.");
+      zoneAlerte.replaceChildren(await fragment(objet("/HTMLBASE/02-dialogue-reference-erreur.html")));
+      const dialogue = zoneAlerte.querySelector('[data-lcdp-dialogue-reference="erreur"]');
+      const titre = zoneAlerte.querySelector("[data-lcdp-dialogue-titre]");
+      const texte = zoneAlerte.querySelector("[data-lcdp-dialogue-message]");
+      const bouton = zoneAlerte.querySelector('[data-lcdp-dialogue-action="fermer"]');
+      if (!dialogue || !titre || !texte || !bouton) throw new Error("Structure ERREUR incomplète.");
+      titre.textContent = options.titre || "Erreur";
       texte.textContent = message;
+      bouton.textContent = "Fermer";
       await new Promise(resolve => {
-        const fermer = () => { zoneAlerte.replaceChildren(); resolve(); };
-        ok.addEventListener("click", fermer, { once: true });
-        close.addEventListener("click", fermer, { once: true });
-        cadre.addEventListener("click", event => { if (event.target === cadre) fermer(); });
+        let termine = false;
+        const fermer = () => {
+          if (termine) return;
+          termine = true;
+          document.removeEventListener("keydown", clavier);
+          zoneAlerte.replaceChildren();
+          resolve();
+        };
+        const clavier = event => {
+          if (event.key === "Escape") { event.preventDefault(); fermer(); }
+        };
+        bouton.addEventListener("click", fermer, { once: true });
+        dialogue.addEventListener("click", event => {
+          if (event.target === dialogue) fermer();
+        });
+        document.addEventListener("keydown", clavier);
+        bouton.focus();
       });
-    } catch (e) { zoneAlerte.replaceChildren(); console.warn(e); window.alert(message); }
+    } catch (erreur) {
+      zoneAlerte.replaceChildren();
+      console.warn(erreur);
+      window.alert(message);
+    }
   }
   async function bandeau() {
     const slot = document.getElementById("lcdp-bandeau-slot");
